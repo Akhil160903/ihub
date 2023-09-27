@@ -6,7 +6,6 @@ import ImageFromUrl from "./ImageFromUrl";
 import Annotation from "./Annotation";
 import "./styles.css";
 
-
 // console.log(newset)
 // for(let i = 0; i < initialStorage.length;i++)
 // {
@@ -25,20 +24,18 @@ function App() {
   const [selectedId, selectAnnotation] = useState(null);
   const [canvasMeasures, setCanvasMeasures] = useState({
     width: window.innerWidth,
-    height: window.innerHeight
+    height: window.innerHeight,
   });
 
-
-  const [initialStorage,setInitialStorage] = useState([]);
-  const arrayy = []
-  const [groupstr,setGroupstr] = useState(new Set());
-  const newset = new Set("")
+  const [initialStorage, setInitialStorage] = useState([]);
+  const arrayy = [];
+  const [groupstr, setGroupstr] = useState(new Set());
+  const newset = new Set("");
 
   useEffect(() => {
-    if (window.localStorage.getItem('myN') === null) {
-      window.localStorage.setItem('myN', 0);
-    }
-    else {
+    if (window.localStorage.getItem("myN") === null) {
+      window.localStorage.setItem("myN", 0);
+    } else {
       for (let l = 0; l < window.localStorage.length; l++) {
         const arr = [];
         for (let k = 0; k < window.localStorage.length; k++) {
@@ -47,25 +44,22 @@ function App() {
             const item = window.localStorage.getItem(key);
             if (item.length !== 0) {
               arr.push(item);
-              newset.add("hist" + l)
-              setGroupstr(newset)
+              newset.add("hist" + l);
+              setGroupstr(newset);
             }
-          }
-          else {
+          } else {
             continue;
           }
         }
         if (arr.length !== 0) {
           arrayy.push(arr);
-          setInitialStorage(arrayy)
+          setInitialStorage(arrayy);
         }
       }
     }
-  }, [])
+  }, []);
 
-
-
-  const handleMouseDown = event => {
+  const handleMouseDown = (event) => {
     if (selectedId === null && newAnnotation.length === 0) {
       const { x, y } = event.target.getStage().getPointerPosition();
       const id = uuid();
@@ -73,7 +67,7 @@ function App() {
     }
   };
 
-  const handleMouseMove = event => {
+  const handleMouseMove = (event) => {
     if (selectedId === null && newAnnotation.length === 1) {
       const sx = newAnnotation[0].x;
       const sy = newAnnotation[0].y;
@@ -85,8 +79,8 @@ function App() {
           y: sy,
           width: x - sx,
           height: y - sy,
-          id
-        }
+          id,
+        },
       ]);
     }
   };
@@ -99,7 +93,7 @@ function App() {
     }
   };
 
-  const handleMouseEnter = event => {
+  const handleMouseEnter = (event) => {
     event.target.getStage().container().style.cursor = "crosshair";
   };
 
@@ -107,33 +101,30 @@ function App() {
     if (event.keyCode === 8 || event.keyCode === 46) {
       if (selectedId !== null) {
         const newAnnotations = annotations.filter(
-          annotation => annotation.id !== selectedId
+          (annotation) => annotation.id !== selectedId
         );
-        await (setAnnotations(newAnnotations));
+        await setAnnotations(newAnnotations);
       }
     }
     // window.localStorage.setItem('annotation-data', JSON.stringify(annotations));
   };
 
-
   const setItemG = (group, key, value) => {
     window.localStorage.setItem(`${group}:${key}`, JSON.stringify(value));
-  }
-
-
+  };
 
   const handleSave = () => {
-    let i = parseInt(localStorage.getItem('myN'))
+    let i = parseInt(localStorage.getItem("myN"));
     for (let x = 0; x < annotations.length; x++) {
-      setItemG('hist' + i, 'item' + x, annotations[x])
+      setItemG("hist" + i, "item" + x, annotations[x]);
     }
     i++;
-    window.localStorage.setItem('myN', i);
-    window.location.reload()
-  }
+    window.localStorage.setItem("myN", i);
+    window.location.reload();
+  };
 
   const showAnnotations = (e) => {
-    const arrrr = []
+    const arrrr = [];
     for (let l = 0; l < window.localStorage.length; l++) {
       const arr = [];
       for (let k = 0; k < window.localStorage.length; k++) {
@@ -144,22 +135,26 @@ function App() {
             arr.push(item);
             // setGroupstr(newset)
           }
-        }
-        else {
+        } else {
           continue;
         }
       }
       if (arr.length !== 0) {
         arrrr.push(arr);
-        setInitialStorage(arrrr)
+        setInitialStorage(arrrr);
       }
     }
-  }
+  };
 
   const annotationsToDraw = [...annotations, ...newAnnotation];
   return (
     <div>
-      <button onClick={handleSave}>Save</button>
+      {/* <button onClick={handleSave}>Save</button> */}
+      <div class="d-grid gap-2">
+        <button type="button" class="btn btn-primary" onClick={handleSave}>
+          Save
+        </button>
+      </div>
       <div className="flex row">
         <div tabIndex={1} onKeyDown={handleKeyDown} className="col">
           <Stage
@@ -188,7 +183,7 @@ function App() {
                     onSelect={() => {
                       selectAnnotation(annotation.id);
                     }}
-                    onChange={newAttrs => {
+                    onChange={(newAttrs) => {
                       const rects = annotations.slice();
                       rects[i] = newAttrs;
                       setAnnotations(rects);
@@ -196,7 +191,7 @@ function App() {
                   />
                 );
               })}
-              {initialStorage.map((annotation, i) => (
+              {initialStorage.map((annotation, i) =>
                 annotation.map((val, ind) => (
                   <Annotation
                     key={ind}
@@ -205,14 +200,14 @@ function App() {
                     onSelect={() => {
                       selectAnnotation(JSON.parse(val).id);
                     }}
-                    onChange={newAttrs => {
+                    onChange={(newAttrs) => {
                       const rects = JSON.parse(val).slice();
                       rects[i] = newAttrs;
                       setAnnotations(rects);
                     }}
                   />
                 ))
-              ))}
+              )}
             </Layer>
           </Stage>
         </div>
@@ -227,9 +222,10 @@ function App() {
             </div>
           ))} */}
           {/* {console.log(initialStorage,annotations,newAnnotation)} */}
-          {initialStorage.length > 0 ? Array.from(groupstr).map((val, oindex) => (
-            <div key={oindex} className="border">
-              {/* {val.length > 0 ? val.map((data, index) => (
+          {initialStorage.length > 0 ? (
+            Array.from(groupstr).map((val, oindex) => (
+              <div key={oindex} className="border">
+                {/* {val.length > 0 ? val.map((data, index) => (
                 <div key={index} className="border">
                   <p className="text-black">ID : {JSON.parse(data).id}</p>
                   <p>x : {JSON.parse(data).x}</p>
@@ -238,9 +234,22 @@ function App() {
                   <p>Height : {JSON.parse(data).height}</p>
                 </div>
               )) : <div></div>} */}
-              <p className="text-black" onClick={() => { showAnnotations(val) }}>ID : {val}</p>
-            </div>
-          )) : <div></div>}
+                <div class="d-grid gap-2">
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary"
+                    onClick={() => {
+                      showAnnotations(val);
+                    }}
+                  >
+                    ID : {val}
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div></div>
+          )}
         </div>
       </div>
     </div>
